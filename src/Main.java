@@ -139,6 +139,7 @@ public class Main {
     }
 
     private static void handleReports(ReportService reportService, String customerId) {
+
         System.out.println("\n--- REPORTS ---");
         System.out.println("Total Balance for Customer " + customerId + ": " +
                 MoneyFormatter.format(reportService.getTotalBalanceForCustomer(customerId)));
