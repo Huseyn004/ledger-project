@@ -1,12 +1,11 @@
 version: '3.8'
-
 services:
   postgres:
     image: postgres:15
-    container_name: ledger-db
+    container_name: ledger_db
     environment:
-      POSTGRES_DB: ledger
-      POSTGRES_USER: ledger_user
-      POSTGRES_PASSWORD: ledger_secret_pass_123
+      POSTGRES_DB: ledgerdb
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
     ports:
-      - "5433:5432"
+      - "5432:5432"

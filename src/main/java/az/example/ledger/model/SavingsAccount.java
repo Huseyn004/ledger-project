@@ -1,35 +1,29 @@
 package az.example.ledger.model;
 
-import az.example.ledger.exception.InvalidAmountException;
 import az.example.ledger.exception.MinimumBalanceException;
+
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 
 public class SavingsAccount extends Account implements InterestBearing {
-    private static final BigDecimal MINIMUM_BALANCE = new BigDecimal("50.00");
+    private static final BigDecimal MIN_BALANCE = new BigDecimal("50.00");
+    private static final BigDecimal INTEREST_RATE = new BigDecimal("0.03");
 
-    public SavingsAccount(String accountNumber, BigDecimal initialBalance) {
-        super(accountNumber, initialBalance);
-        if (initialBalance.compareTo(MINIMUM_BALANCE) < 0) {
-            throw new InvalidAmountException("Opening balance must be at least 50.00 for SavingsAccount", initialBalance);
-        }
+    public SavingsAccount(String accountNumber, BigDecimal balance) {
+        super(accountNumber, balance);
     }
+
+    @Override
+    public String getType() { return "SAVINGS"; }
 
     @Override
     public void withdraw(BigDecimal amount) {
-        if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
-            throw new InvalidAmountException("Withdrawal amount must be greater than zero", amount);
+        if (this.balance.subtract(amount).compareTo(MIN_BALANCE) < 0) {
+            throw new MinimumBalanceException("Savings account balance cannot fall below " + MIN_BALANCE);
         }
-        BigDecimal prospectiveBalance = balance.subtract(amount);
-        if (prospectiveBalance.compareTo(MINIMUM_BALANCE) < 0) {
-            throw new MinimumBalanceException(getAccountNumber(), amount, MINIMUM_BALANCE);
-        }
-        this.balance = prospectiveBalance;
+        super.withdraw(amount);
     }
-
     @Override
-    public BigDecimal calculateMonthlyInterest() {
-        return balance.multiply(new BigDecimal("0.05"))
-                .divide(new BigDecimal("12"), 2, RoundingMode.HALF_UP);
+    public BigDecimal calculateInterest() {
+        return this.balance.multiply(INTEREST_RATE);
     }
 }

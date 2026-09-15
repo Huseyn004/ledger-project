@@ -3,7 +3,6 @@ package az.example.ledger.service;
 import az.example.ledger.exception.AccountNotFoundException;
 import az.example.ledger.exception.SameAccountTransferException;
 import az.example.ledger.model.Account;
-import az.example.ledger.model.Transaction;
 import az.example.ledger.repository.AccountRepository;
 
 import java.math.BigDecimal;
@@ -16,48 +15,30 @@ public class AccountService {
         this.accountRepository = accountRepository;
     }
 
-    public void openAccount(Account account) {
-        accountRepository.save(account);
-    }
+    public List<Account> findAll() { return accountRepository.findAll(); }
 
-    public Account getAccount(String accountNumber) {
-        return accountRepository.findByNumber(accountNumber)
-                .orElseThrow(() -> new AccountNotFoundException(accountNumber));
+    public Account findByNumber(String number) {
+        return accountRepository.findByNumber(number)
+                .orElseThrow(() -> new AccountNotFoundException("Account not found: " + number));
     }
 
     public void deposit(String accountNumber, BigDecimal amount) {
-        Account account = getAccount(accountNumber);
+        Account account = findByNumber(accountNumber);
         account.deposit(amount);
+        accountRepository.save(account);
     }
 
     public void withdraw(String accountNumber, BigDecimal amount) {
-        Account account = getAccount(accountNumber);
+        Account account = findByNumber(accountNumber);
         account.withdraw(amount);
+        accountRepository.save(account);
     }
 
-    public void transfer(String fromAccountNum, String toAccountNum, BigDecimal amount) {
-        if (fromAccountNum.equals(toAccountNum)) {
-            throw new SameAccountTransferException(fromAccountNum);
+    public void transfer(String fromNum, String toNum, BigDecimal amount) {
+        if (fromNum.equalsIgnoreCase(toNum)) {
+            throw new SameAccountTransferException("Cannot transfer to the same account.");
         }
-
-        Account source = getAccount(fromAccountNum);
-        Account target = getAccount(toAccountNum);
-
-        // Deduct from source account (logs TRANSFER_OUT)
-        source.withdrawForTransfer(amount);
-
-        try {
-            // Credit target account (logs TRANSFER_IN)
-            target.depositFromTransfer(amount);
-        } catch (RuntimeException e) {
-            // Compensating action: undo debit if deposit fails
-            source.deposit(amount);
-            throw e;
-        }
-    }
-
-    public List<Transaction> getStatement(String accountNumber) {
-        Account account = getAccount(accountNumber);
-        return account.getTransactions();
+        withdraw(fromNum, amount);
+        deposit(toNum, amount);
     }
 }
