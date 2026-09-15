@@ -22,7 +22,6 @@ public class SavingsAccount extends Account implements InterestBearing {
         }
         super.withdraw(amount);
     }
-
     @Override
     public BigDecimal calculateInterest() {
         return this.balance.multiply(INTEREST_RATE);

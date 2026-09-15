@@ -15,23 +15,18 @@ public class DbConfig {
 
     public DbConfig() {
         Map<String, String> env = loadEnvFile();
-
         this.url = env.get("DB_URL");
         this.username = env.get("DB_USER");
         this.password = env.get("DB_PASSWORD");
     }
-
     public DbConfig(String url, String username, String password) {
         this.url = url;
         this.username = username;
         this.password = password;
     }
-
     private Map<String, String> loadEnvFile() {
         Map<String, String> values = new HashMap<>();
-
         Path envFile = Path.of(".env").toAbsolutePath();
-
         System.out.println("Looking for .env at: " + envFile);
         System.out.println("File exists: " + Files.exists(envFile));
 

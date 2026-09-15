@@ -22,15 +22,14 @@ public class Main {
 
         LoginService loginService = new LoginService(userRepository);
         AccountService accountService = new AccountService(accountRepository);
-
         ConsoleReader reader = new ConsoleReader();
         Session session = null;
         int attempts = 0;
-
         while (attempts < 3) {
             System.out.println("=== LOGIN ===");
             String username = reader.readLine("Username");
             char[] password = reader.readPassword("Password");
+
 
             try {
                 session = loginService.login(username, password);
