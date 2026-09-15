@@ -1,6 +1,5 @@
 package az.example.ledger.console;
 
-import az.example.ledger.model.Account;
 import az.example.ledger.security.Session;
 import az.example.ledger.service.AccountService;
 import az.example.ledger.util.MoneyFormatter;
